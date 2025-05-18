@@ -193,6 +193,23 @@ where
     }
 }
 
+impl<T, const N1: usize, const N2: usize> From<[T; N2]> for CopiableBuffer<T, N1>
+where
+    T: CopiableItem,
+{
+    fn from(data: [T; N2]) -> Self {
+        if N2 > N1 {
+            panic!("Given fixed size array size {N2} is bigger than the `CopiableBuffer<{}, {N1}>` capacity.", std::any::type_name::<T>());
+        }
+        let mut ret = Self {
+            buf_used: N2,
+            buffer: [T::default(); N1]
+        };
+        ret.buffer[..N2].copy_from_slice(&data);
+        ret
+    }
+}
+
 impl<T, const N: usize> Index<usize> for CopiableBuffer<T, N>
 where
     T: CopiableItem,
