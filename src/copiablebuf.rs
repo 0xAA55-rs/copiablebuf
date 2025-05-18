@@ -56,6 +56,7 @@ where
     T: CopiableItem,
 {
     #[inline(always)]
+    #[must_use]
     pub const fn new() -> Self {
         Self {
             buf_used: 0,
@@ -64,6 +65,7 @@ where
     }
 
     #[inline(always)]
+    #[must_use]
     pub const fn from_array(data: &[T]) -> Self {
         let len = data.len();
         assert!(N >= len);
@@ -78,6 +80,7 @@ where
     }
 
     #[inline(always)]
+    #[must_use]
     pub const fn from_fixed_array<const N2: usize>(data: [T; N2]) -> Self {
         assert!(N >= N2);
         let mut ret = Self::new();
@@ -121,6 +124,7 @@ where
     }
 
     #[inline(always)]
+    #[must_use]
     pub fn last(&mut self) -> &mut T {
         if self.buf_used == 0 {
             panic!(
@@ -155,6 +159,7 @@ where
     }
 
     #[inline(always)]
+    #[must_use]
     pub fn iter(&self) -> impl Iterator<Item = &T> {
         CopiableBufferIter::<T, N> {
             refbuf: self,
@@ -163,6 +168,7 @@ where
     }
 
     #[inline(always)]
+    #[must_use]
     pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut T> {
         CopiableBufferIterMut::<T, N> {
             refbuf: self,
@@ -176,26 +182,31 @@ where
     }
 
     #[inline(always)]
+    #[must_use]
     pub fn capacity(&self) -> usize {
         N
     }
 
     #[inline(always)]
+    #[must_use]
     pub fn is_full(&self) -> bool {
         self.len() == self.capacity()
     }
 
     #[inline(always)]
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
 
     #[inline(always)]
+    #[must_use]
     pub fn get_array(&self) -> &[T; N] {
         &self.buffer
     }
 
     #[inline(always)]
+    #[must_use]
     pub fn into_array(self) -> [T; N] {
         self.buffer
     }
