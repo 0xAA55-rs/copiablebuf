@@ -2,6 +2,7 @@
 use std::{
     cmp::{min, PartialEq},
     fmt::Debug,
+    mem,
     iter::FromIterator,
     ops::{Index, IndexMut, Deref, DerefMut, Range, RangeFrom, RangeTo, RangeFull},
 };
@@ -55,11 +56,38 @@ where
     T: CopiableItem,
 {
     #[inline(always)]
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             buf_used: 0,
-            buffer: [T::default(); N],
+            buffer: unsafe { mem::zeroed() },
         }
+    }
+
+    #[inline(always)]
+    pub const fn from_array(data: &[T]) -> Self {
+        let len = data.len();
+        assert!(N >= len);
+        let mut ret = Self::new();
+        let mut i = 0;
+        while i < len {
+            ret.buffer[i] = data[i];
+            i += 1;
+        }
+        ret.buf_used = len;
+        ret
+    }
+
+    #[inline(always)]
+    pub const fn from_fixed_array<const N2: usize>(data: [T; N2]) -> Self {
+        assert!(N >= N2);
+        let mut ret = Self::new();
+        let mut i = 0;
+        while i < N2 {
+            ret.buffer[i] = data[i];
+            i += 1;
+        }
+        ret.buf_used = N2;
+        ret
     }
 
     #[inline(always)]
